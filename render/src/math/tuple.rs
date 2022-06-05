@@ -2,41 +2,41 @@ use crate::math::f64_eq;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Copy, Clone, Debug)]
-pub(crate) struct Tuple {
-    pub(crate) x: f64,
-    pub(crate) y: f64,
-    pub(crate) z: f64,
-    pub(crate) w: f64,
+pub struct Tuple {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub w: f64,
 }
 
 impl Tuple {
-    pub(crate) fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
+    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
         Tuple { x, y, z, w }
     }
 
-    pub(crate) fn point(x: f64, y: f64, z: f64) -> Tuple {
+    pub fn point(x: f64, y: f64, z: f64) -> Tuple {
         Tuple::new(x, y, z, 1.)
     }
 
-    pub(crate) fn direction(x: f64, y: f64, z: f64) -> Tuple {
+    pub fn direction(x: f64, y: f64, z: f64) -> Tuple {
         Tuple::new(x, y, z, 0.)
     }
 
-    pub(crate) fn is_point(&self) -> bool {
+    pub fn is_point(&self) -> bool {
         return self.w == 1.;
     }
 
-    pub(crate) fn is_direction(&self) -> bool {
+    pub fn is_direction(&self) -> bool {
         return self.w == 0.;
     }
 
-    pub(crate) fn magnitude(&self) -> f64 {
+    pub fn magnitude(&self) -> f64 {
         let total = self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2);
 
         total.sqrt()
     }
 
-    pub(crate) fn normalize(&self) -> Tuple {
+    pub fn normalize(&self) -> Tuple {
         let x = self.x / self.magnitude();
         let y = self.y / self.magnitude();
         let z = self.z / self.magnitude();
@@ -45,11 +45,11 @@ impl Tuple {
         Tuple::new(x, y, z, w)
     }
 
-    pub(crate) fn dot(&self, other: Tuple) -> f64 {
+    pub fn dot(&self, other: Tuple) -> f64 {
         self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
     }
 
-    pub(crate) fn cross(&self, other: Tuple) -> Tuple {
+    pub fn cross(&self, other: Tuple) -> Tuple {
         let x = self.y * other.z - self.z * other.y;
         let y = self.z * other.x - self.x * other.z;
         let z = self.x * other.y - self.y * other.x;
@@ -57,7 +57,7 @@ impl Tuple {
         Tuple::direction(x, y, z)
     }
 
-    pub(crate) fn reflect(&self, normal: Tuple) -> Tuple {
+    pub fn reflect(&self, normal: Tuple) -> Tuple {
         *self - normal * 2. * self.dot(normal)
     }
 }
