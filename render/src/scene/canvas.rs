@@ -87,7 +87,7 @@ impl Canvas {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::scene::shading::color::Color;
+    use crate::scene::color::Color;
 
     #[test]
     fn test_creating_canvas() {

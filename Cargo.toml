@@ -5,6 +5,7 @@ members = [
     "render",
 
     # examples as binary (first is excluded because it dont produce any output))
+    "chapter_one",
     "chapter_two",
 ]
 
