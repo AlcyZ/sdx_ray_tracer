@@ -1,26 +1,22 @@
-use render::math::tuple::Tuple;
-use render::scene::canvas::Canvas;
-use render::scene::color::Color;
+use std::io::Cursor;
+
+use image::io::Reader;
+use render::{
+    math::tuple::Tuple,
+    scene::{canvas::Canvas, color::Color},
+};
 
 fn main() {
-    // this is the sampe sample code like for chapter one, but plotted this time
     let start = Tuple::point(0.0, 1.0, 0.0);
-    let velocity = Tuple::direction(1.0, 1.8, 0.0).normalize();
-
-    let gravity = Tuple::direction(1.0, 1.0, 1.0);
-    let wind = Tuple::direction(0.01, 1.0, 1.0);
-
+    let velocity = Tuple::direction(1.0, 1.8, 0.0).normalize() * 11.25;
     let mut projectile = Projectile {
         position: start,
         velocity,
     };
 
-    // Todo: Check how to get method parameter hints/descriptions (maybe in INSERT-Mode only)
-
-    let environment = Environment {
-        gravity: Tuple::direction(0.0, -0.01, 0.0),
-        wind: Tuple::direction(-0.01, 0.0, 0.0),
-    };
+    let gravity = Tuple::direction(0.0, -0.1, 0.0);
+    let wind = Tuple::direction(-0.01, 0.0, 0.0);
+    let environment = Environment { gravity, wind };
 
     let width = 900;
     let height = 550;
@@ -31,18 +27,20 @@ fn main() {
         projectile = tick(environment, projectile);
         canvas.write_pixel(
             projectile.position.x as usize,
-            projectile.position.y as usize,
+            (height as f64 - projectile.position.y) as usize,
             Color::simple_green(),
         );
         counter = counter + 1;
         println!("Current counter is {}", counter);
     }
 
-    println!("Saving raw ppm data to file raw_data.txt");
-    let ppm = canvas.to_ppm();
-    std::fs::write("./raw_data.txt", ppm).unwrap();
+    let mut reader = Reader::new(Cursor::new(canvas.to_ppm()))
+        .with_guessed_format()
+        .expect("Failed to create image reader from ppm data");
+    let img = reader.decode().expect("Decoding image data failed");
+    img.save("./chapter_two.png").expect("Failed to save decoded image");
 
-    // println!("Saving contents of canvas into sample txt file");
+    println!("done!");
 }
 
 #[derive(Debug, Copy, Clone)]
